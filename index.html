@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d1117">
+    <title>DBZ x Pokémon: Anime Clash 3D</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Three.js 3D Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- 3D Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Top Utility Bar -->
+    <div id="top-bar">
+        <button id="btn-sound-toggle" class="util-btn" title="Activar/Silenciar Sonido">🔊</button>
+        <button id="btn-fullscreen" class="util-btn" title="Pantalla Completa">⛶</button>
+    </div>
+
+    <!-- Orientation Advice (Mobile) -->
+    <div id="orientation-warning" class="hidden">
+        <span>🔄 Gira tu celular a horizontal para jugar mejor</span>
+    </div>
+
+    <!-- Battle HUD -->
+    <div id="hud" class="hidden">
+        <!-- Player 1 Status -->
+        <div id="p1-hud" class="fighter-hud">
+            <div id="p1-name" class="name-badge">GOKU</div>
+            <div class="bar-container health-container">
+                <div id="p1-health-fill" class="health-fill"></div>
+            </div>
+            <div class="bar-container ki-container">
+                <div id="p1-ki-fill" class="ki-fill"></div>
+            </div>
+        </div>
+
+        <!-- VS Emblem -->
+        <div id="vs-emblem">VS</div>
+
+        <!-- Player 2 (CPU) Status -->
+        <div id="p2-hud" class="fighter-hud">
+            <div id="p2-name" class="name-badge">PIKACHU (CPU)</div>
+            <div class="bar-container health-container">
+                <div id="p2-health-fill" class="health-fill"></div>
+            </div>
+            <div class="bar-container ki-container">
+                <div id="p2-ki-fill" class="ki-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcer Text (Fight! / K.O.!) -->
+    <div id="announcer-text" class="hidden">FIGHT!</div>
+
+    <!-- Touch Controls (Mobile) -->
+    <div id="touch-controls" class="hidden">
+        <!-- Virtual Analog Joystick (Left Thumb) -->
+        <div id="joystick-zone">
+            <div id="joystick-knob"></div>
+        </div>
+
+        <!-- Action Buttons (Right Thumb) -->
+        <div id="action-cluster">
+            <!-- Ultimate Move (Kamehameha / Mega Thunderbolt) -->
+            <button id="btn-ultimate" class="action-btn" title="Ataque Definitivo">
+                <span class="btn-icon">💥</span>
+                <span class="btn-label">ULTIMATE</span>
+            </button>
+
+            <!-- Ki / Energy Blast -->
+            <button id="btn-blast" class="action-btn" title="Ráfaga de Ki / Chispa">
+                <span class="btn-icon">⚡</span>
+                <span class="btn-label">BLAST</span>
+            </button>
+
+            <!-- Melee Attack Combo -->
+            <button id="btn-attack" class="action-btn" title="Golpe / Combo">
+                <span class="btn-icon">👊</span>
+                <span class="btn-label">GOLPE</span>
+            </button>
+
+            <!-- Dash / Dodge -->
+            <button id="btn-dash" class="action-btn" title="Esquivar / Dash">
+                <span class="btn-icon">💨</span>
+                <span class="btn-label">DASH</span>
+            </button>
+
+            <!-- Charge Ki / Energy -->
+            <button id="btn-charge" class="action-btn" title="Cargar Energía">
+                <span class="btn-icon">🔥</span>
+                <span class="btn-label">CARGA</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Character Selection Screen -->
+    <div id="selection-screen" class="modal-screen">
+        <div class="title-banner">
+            <h1 class="main-title">DBZ × POKÉMON</h1>
+            <p class="subtitle">ANIME CLASH 3D</p>
+        </div>
+
+        <div class="selection-container">
+            <!-- Player Selection -->
+            <div class="selection-column">
+                <h3>TU LUCHADOR (P1)</h3>
+                <div class="char-grid">
+                    <div class="char-card char-card-p1 selected" data-char="goku">
+                        <div class="char-avatar">🥋</div>
+                        <div class="char-name">GOKU</div>
+                        <div class="char-tag">Saiyan / Artes Marciales</div>
+                    </div>
+                    <div class="char-card char-card-p1" data-char="pikachu">
+                        <div class="char-avatar">⚡</div>
+                        <div class="char-name">PIKACHU</div>
+                        <div class="char-tag">Eléctrico / Ágil</div>
+                    </div>
+                    <div class="char-card char-card-p1" data-char="vegeta">
+                        <div class="char-avatar">👑</div>
+                        <div class="char-name">VEGETA</div>
+                        <div class="char-tag">Príncipe Saiyan</div>
+                    </div>
+                    <div class="char-card char-card-p1" data-char="charizard">
+                        <div class="char-avatar">🔥</div>
+                        <div class="char-name">CHARIZARD</div>
+                        <div class="char-tag">Fuego / Dragón</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CPU Selection -->
+            <div class="selection-column">
+                <h3>RIVAL (CPU)</h3>
+                <div class="char-grid">
+                    <div class="char-card char-card-p2" data-char="goku">
+                        <div class="char-avatar">🥋</div>
+                        <div class="char-name">GOKU</div>
+                        <div class="char-tag">Saiyan</div>
+                    </div>
+                    <div class="char-card char-card-p2 selected" data-char="pikachu">
+                        <div class="char-avatar">⚡</div>
+                        <div class="char-name">PIKACHU</div>
+                        <div class="char-tag">Eléctrico</div>
+                    </div>
+                    <div class="char-card char-card-p2" data-char="vegeta">
+                        <div class="char-avatar">👑</div>
+                        <div class="char-name">VEGETA</div>
+                        <div class="char-tag">Príncipe Saiyan</div>
+                    </div>
+                    <div class="char-card char-card-p2" data-char="charizard">
+                        <div class="char-avatar">🔥</div>
+                        <div class="char-name">CHARIZARD</div>
+                        <div class="char-tag">Fuego / Dragón</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="btn-start-fight" class="cta-button">¡A LUCHAR!</button>
+
+        <p class="pc-hint">
+            📱 <b>En Celular:</b> Usa el joystick táctil y los botones en pantalla.<br>
+            💻 <b>En PC:</b> Moverse con <b>W, A, S, D</b> | Golpe: <b>J</b> | Ráfaga: <b>K</b> | Cargar Ki: <b>L</b> | Ultimate: <b>U</b> | Dash: <b>Espacio</b>
+        </p>
+    </div>
+
+    <!-- Game Over / Victory Modal -->
+    <div id="game-over-screen" class="modal-screen hidden">
+        <div class="game-over-card">
+            <h2 id="game-over-title">¡VICTORIA!</h2>
+            <p id="game-over-sub">¡GOKU HA DERROTADO A PIKACHU!</p>
+            <div class="game-over-btn-group">
+                <button id="btn-rematch" class="cta-button">REVANCHA</button>
+                <button id="btn-change-char" class="sec-button">ELEGIR LUCHADORES</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Scripts -->
+    <script src="js/audio.js"></script>
+    <script src="js/vfx.js"></script>
+    <script src="js/arena.js"></script>
+    <script src="js/characters.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

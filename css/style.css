@@ -1,0 +1,551 @@
+/* DBZ x Pokémon: Anime Clash 3D Styles */
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&family=Rajdhani:wght@600;700;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #0d1117;
+    font-family: 'Rajdhani', sans-serif;
+    color: #ffffff;
+}
+
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* ==========================================================
+   TOP BAR & UTILITY BUTTONS
+   ========================================================== */
+#top-bar {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
+    z-index: 50;
+}
+
+.util-btn {
+    background: rgba(0, 0, 0, 0.65);
+    border: 2px solid #ffd700;
+    color: #fff;
+    font-size: 1.2rem;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: transform 0.1s, background 0.2s;
+}
+.util-btn:active {
+    transform: scale(0.9);
+    background: rgba(255, 215, 0, 0.4);
+}
+
+/* ==========================================================
+   ORIENTATION WARNING (MOBILE)
+   ========================================================== */
+#orientation-warning {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(238, 34, 34, 0.95);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    border: 2px solid #fff;
+}
+
+/* ==========================================================
+   FIGHT HUD
+   ========================================================== */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.fighter-hud {
+    width: 38%;
+    max-width: 320px;
+}
+
+.name-badge {
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000;
+    margin-bottom: 4px;
+}
+
+#p1-hud .name-badge {
+    color: #ff9900;
+}
+#p2-hud .name-badge {
+    color: #00e5ff;
+    text-align: right;
+}
+
+.bar-container {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #222;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+.health-container {
+    height: 18px;
+    transform: skewX(-15deg);
+    border: 2px solid #fff;
+}
+
+.health-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff2222 0%, #ffbb00 60%, #00ff66 100%);
+    transition: width 0.15s ease-out;
+}
+
+#p2-hud .health-container {
+    transform: skewX(15deg);
+}
+#p2-hud .health-fill {
+    float: right;
+}
+
+.ki-container {
+    height: 10px;
+    margin-top: 4px;
+    transform: skewX(-15deg);
+    border: 1px solid #ffd700;
+}
+
+.ki-fill {
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, #0088ff, #00f0ff);
+    box-shadow: 0 0 8px #00f0ff;
+    transition: width 0.1s linear;
+}
+#p2-hud .ki-container {
+    transform: skewX(15deg);
+}
+#p2-hud .ki-fill {
+    float: right;
+}
+
+/* VS Emblem */
+#vs-emblem {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    color: #ffd700;
+    text-shadow: 2px 2px 0 #ff0000, 4px 4px 0 #000;
+    padding: 0 10px;
+}
+
+/* Announcer Text */
+#announcer-text {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Bangers', cursive;
+    font-size: 4.5rem;
+    color: #fff;
+    text-shadow: 4px 4px 0 #ff2200, 8px 8px 0 #000;
+    z-index: 40;
+    letter-spacing: 4px;
+    pointer-events: none;
+}
+
+.pop-in {
+    animation: popInAnim 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.fade-out {
+    animation: fadeOutAnim 0.3s ease-out forwards;
+}
+
+@keyframes popInAnim {
+    0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+@keyframes fadeOutAnim {
+    0% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -65%) scale(1.2); }
+}
+
+/* ==========================================================
+   TOUCH CONTROLS (MOBILE)
+   ========================================================== */
+#touch-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 180px;
+    z-index: 30;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 15px 25px;
+}
+
+/* Joystick */
+#joystick-zone {
+    width: 125px;
+    height: 125px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.45) 70%);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    touch-action: none;
+}
+
+#joystick-knob {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffd700 0%, #ff8800 100%);
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+    pointer-events: none;
+}
+
+/* Action Buttons Cluster */
+#action-cluster {
+    position: relative;
+    width: 220px;
+    height: 160px;
+    pointer-events: auto;
+}
+
+.action-btn {
+    position: absolute;
+    border-radius: 50%;
+    color: #fff;
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(255,255,255,0.8);
+    transition: transform 0.08s, filter 0.08s;
+}
+
+.action-btn .btn-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+}
+.action-btn .btn-label {
+    font-size: 0.68rem;
+    margin-top: 1px;
+}
+
+.action-btn:active, .action-btn.active {
+    transform: scale(0.9);
+    filter: brightness(1.3);
+}
+
+/* Button Layout positioning */
+#btn-attack {
+    width: 62px;
+    height: 62px;
+    background: linear-gradient(135deg, #ff3b30, #c70000);
+    bottom: 25px;
+    right: 75px;
+}
+
+#btn-blast {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    bottom: 85px;
+    right: 65px;
+}
+
+#btn-charge {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #f7b733, #fc4a1a);
+    bottom: 10px;
+    right: 5px;
+}
+
+#btn-dash {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #8e2de2, #4a00e0);
+    bottom: 80px;
+    right: 5px;
+}
+
+#btn-ultimate {
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, #ffd700, #ff0055);
+    bottom: 45px;
+    right: 145px;
+    border: 3px solid #ffe600;
+}
+
+#btn-ultimate.ready {
+    animation: pulseUltimate 0.8s infinite alternate;
+    box-shadow: 0 0 18px #ffd700, 0 0 30px #ff0055;
+}
+
+@keyframes pulseUltimate {
+    0% { transform: scale(1); filter: brightness(1); }
+    100% { transform: scale(1.1); filter: brightness(1.4); }
+}
+
+/* ==========================================================
+   SCREENS (SELECTION & GAME OVER)
+   ========================================================== */
+.modal-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(13, 17, 23, 0.88) 0%, rgba(5, 7, 10, 0.98) 100%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    backdrop-filter: blur(8px);
+}
+
+.modal-screen.hidden, #hud.hidden, #touch-controls.hidden, #orientation-warning.hidden {
+    display: none !important;
+}
+
+.title-banner {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.main-title {
+    font-family: 'Bangers', cursive;
+    font-size: 2.8rem;
+    color: #ffd700;
+    letter-spacing: 2px;
+    text-shadow: 3px 3px 0 #ff3300, 6px 6px 0 #000;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: #00e5ff;
+    letter-spacing: 3px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Character Selection Layout */
+.selection-container {
+    display: flex;
+    gap: 20px;
+    max-width: 720px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.selection-column {
+    flex: 1;
+    min-width: 250px;
+}
+
+.selection-column h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    color: #ffcc00;
+    text-align: center;
+}
+
+.char-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.char-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.char-card:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.char-card.selected {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.18);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    transform: translateY(-3px);
+}
+
+.char-avatar {
+    font-size: 2.2rem;
+    margin-bottom: 4px;
+}
+
+.char-name {
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.char-tag {
+    font-size: 0.72rem;
+    color: #bbb;
+}
+
+/* Big Start Button */
+.cta-button {
+    background: linear-gradient(135deg, #ff8800, #ff2200);
+    border: 3px solid #ffd700;
+    color: #fff;
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    padding: 10px 45px;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255, 50, 0, 0.6);
+    letter-spacing: 2px;
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.cta-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.8);
+}
+
+.cta-button:active {
+    transform: scale(0.96);
+}
+
+/* Game Over Card */
+.game-over-card {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 25px 40px;
+    border-radius: 20px;
+    border: 3px solid #ffd700;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+#game-over-title {
+    font-family: 'Bangers', cursive;
+    font-size: 3.5rem;
+    letter-spacing: 3px;
+}
+
+#game-over-sub {
+    font-size: 1.1rem;
+    color: #eee;
+    margin-bottom: 10px;
+}
+
+.game-over-btn-group {
+    display: flex;
+    gap: 15px;
+}
+
+.sec-button {
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid #fff;
+    color: #fff;
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    padding: 8px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+.sec-button:active {
+    transform: scale(0.95);
+}
+
+/* PC Controls Helper */
+.pc-hint {
+    margin-top: 15px;
+    font-size: 0.8rem;
+    color: #8892b0;
+    text-align: center;
+}
+
+/* Responsive tweaks for smaller screens */
+@media (max-height: 480px) {
+    .main-title { font-size: 2rem; }
+    .selection-container { gap: 10px; margin-bottom: 10px; }
+    .char-card { padding: 4px 6px; }
+    .char-avatar { font-size: 1.6rem; }
+    .char-name { font-size: 1rem; }
+    .cta-button { font-size: 1.4rem; padding: 6px 30px; }
+    #touch-controls { height: 140px; padding: 10px 15px; }
+    #joystick-zone { width: 100px; height: 100px; }
+    #joystick-knob { width: 45px; height: 45px; }
+    .action-btn { transform: scale(0.85); }
+    #announcer-text { font-size: 3.2rem; }
+}
