@@ -61,7 +61,8 @@ git push -u origin main
 ---
 
 ## 🌟 Características
-- **Modelos 3D Cel-Shaded Anime:** Goku, Pikachu, Vegeta y Charizard con animaciones personalizadas (stance, carrera, golpes, carga, desmayo por K.O.).
+- **Modelos 3D Auténticos GLB & Animaciones Esqueléticas:** Modelos 3D de alta fidelidad para Goku, Pikachu y Charizard (`assets/*.glb`), con animaciones reales (`03-KAMEHAMEHA`, `02-STANCE`, `Impactrueno`, etc.) y modelo detallado de Vegeta con armadura Saiyan.
+- **Sistema Híbrido con Respaldo Procedural:** Si los archivos 3D tardan en cargar o se juega sin conexión, el motor cuenta con modelos procedurales HD con texturas faciales Canvas para que el juego nunca se congele ni muestre pantallas vacías.
 - **Escenario 3D:** Estadio de artes marciales Tenkaichi con pilares Pokéball y montañas Dragon Ball.
 - **Efectos Visuales (VFX):** Auras de Ki resplandecientes, relámpagos, esferas de energía, ondas expansivas y sacudida de pantalla.
 - **Música y Efectos Web Audio:** Sintetizados en tiempo real sin descargas pesadas de audio ni problemas de copyright.
